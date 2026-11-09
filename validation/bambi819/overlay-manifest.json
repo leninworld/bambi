@@ -1,0 +1,47 @@
+[
+  {
+    "path": "bambi/models.py",
+    "bytes": 77173,
+    "sha256": "e5420c607243b66353bad2ea5094cfe2bd46eab329816c452ad9ea1522c7ea5f"
+  },
+  {
+    "path": "bambi/utils.py",
+    "bytes": 7076,
+    "sha256": "ca35604236313bb84e88347d0466ee0c9f577642b49908bcc9b003175a5b825e"
+  },
+  {
+    "path": "bambi/backend/pymc/model.py",
+    "bytes": 35946,
+    "sha256": "097f95055e3d295537a4d39cc8c407c849f8f0e6746ad8c84e612b926fb695e3"
+  },
+  {
+    "path": "bambi/interpret/effects.py",
+    "bytes": 45027,
+    "sha256": "cfb58ac1ff3f0f7dca43e6f75c659f4eea0a59dc5e720c81d98e726dbd177f2d"
+  },
+  {
+    "path": "bambi/interpret/utils.py",
+    "bytes": 6421,
+    "sha256": "f597d579808dfad8c5914cd3d0430fee1d7b4a37966f45d35619e27003db5e27"
+  },
+  {
+    "path": "tests/test_interpret_priors.py",
+    "bytes": 14162,
+    "sha256": "719c011b30cc89ef93dc0fcb964044144554b96df82b452dd00fb6913d7f6627"
+  },
+  {
+    "path": "docs/_quarto.yml",
+    "bytes": 5447,
+    "sha256": "1d441adc645022377ceb863e7de7ba50b6b9e027fc8281cf9fb1c0383392ce85"
+  },
+  {
+    "path": "docs/notebooks/gallery.yml",
+    "bytes": 7987,
+    "sha256": "42b8b72c3ee219ae97365be1329e775548796307cfd4f93d0e0b5397c426b9ec"
+  },
+  {
+    "path": "docs/notebooks/prior_predictive_interpret.ipynb",
+    "bytes": 5323,
+    "sha256": "247505c4c086c02c6af6a91086eefaed2b6bbb85e7bf534fe0d436ffe30f9516"
+  }
+]
