@@ -1,0 +1,79 @@
+{
+  "source": "f091d78049d91f566e420a26ffd3847568973b73",
+  "source_tree": "e4c6f29e440d1e357abc64eb2f4415d1c2014765",
+  "purpose": "Bambi558 stable-main full unmodified native baseline: second and final attempt, first failed run42714597762 preserved",
+  "base_image": "python@sha256:dddbf9c143d4d3dff1c68e104645bac612823d33ef09571c71eff41faf07c194",
+  "target_seconds": 3000,
+  "absolute_seconds": 3600,
+  "cleanup_reserve_seconds": 180,
+  "network_bytes_cap": 8589934592,
+  "artifact_cap": 67108864,
+  "branch": "validate-bambi558-main-g0-i2",
+  "execution_enabled": true,
+  "attempt": 2,
+  "max_issue_validation_attempts": 2,
+  "host_memory_admission": 13958643712,
+  "host_disk_admission": 25769803776,
+  "native_container_memory": "12g",
+  "native_container_pids": 4096,
+  "ci_timing_evidence": "../bambi558-branch-comparison/current-ci-extracted.json: pinned-main successful upstream full job 558/889/898/1208s plus docs156s; old dev native M0 1913s, not this baseline proof",
+  "venue": "GitHubhostednativeAMD64Docker; noMacDocker/externaldiskaccess",
+  "lanes": {
+    "py312-cvm": {
+      "env": "py312",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 840,
+      "pytest_entry_floor_seconds": 1020,
+      "pytest_basis": "1.5x complete upstream main job 558s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py312-numba": {
+      "env": "py312",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1340,
+      "pytest_entry_floor_seconds": 1520,
+      "pytest_basis": "1.5x complete upstream main job 889s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py313-cvm": {
+      "env": "py313",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 1350,
+      "pytest_entry_floor_seconds": 1530,
+      "pytest_basis": "1.5x complete upstream main job 898s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py313-numba": {
+      "env": "py313",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1820,
+      "pytest_entry_floor_seconds": 2000,
+      "pytest_basis": "1.5x complete upstream main job 1208s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "docs": {
+      "env": "dev",
+      "linker": "cvm",
+      "role": "docs"
+    }
+  },
+  "pixi_version": "0.62.2",
+  "quarto_version": "1.8.26",
+  "closure_policy": "One retained complete fca13390 lock from actual same-f091 attempt1 installed with --frozen in every lane, no solve; verify exact bytes before/after install and before baseline/freeze. Same239file source identity fixes pyproject; retained full import/tool lock reconciliation applies.",
+  "approval_state": "PROPOSED_EXACT_ATTEMPT2_NOT_YET_APPROVED_OR_LAUNCHED",
+  "host_total_memory_admission": 15032385536,
+  "diagnostic_policy": "Dependency fault injection non-gating for unmodified baseline; successful real semantics evidence remains REQUIRED before candidate authoring.",
+  "resource_basis": "Container12GiB based on actual retained install8.557GB/test4.424GB comparison, not guaranteed currentmain fit. MemAvailable13GiB=12GiBcontainer+1GiBhostguard; MemTotal14GiB separate. Hard cgroup/OOM/disk guards still apply.",
+  "time_basis": "Per-lane pytest cap=ceil(1.5*same-main-full-job-duration/10)*10. Entire job conservatively exceeds pytest portion. Same floor(cap+180s) read by both controllers. Worst py313numba planned typical: queue120+checkouts120+image90+F0 60+helpers20+install180+prepare120+baselineprelude60=770; pytest1820+coverage/freeze/stop/upload180=2770s plus230s variability margin=3000s. This is a sized typical path, not worst-case cap sum guarantee; currentmain G0 must measure it. A slow solve/queue stops before full suite, no partial pass.",
+  "validation_environment_differences": "Upstream required commands preserved; Docker, observer plugin, junit/durations, PYTHONPATH=/packet, thread variables2 and controlled tool/source mounts disclosed. Test networking bridge now matches upstream accessibility.",
+  "prior_failed_run": 42714597762,
+  "correction_rounds_used": 1,
+  "no_more_harness_correction_after_failure": true,
+  "canonical_lock": {
+    "path": "pixi.lock",
+    "mode": "100644",
+    "bytes": 627098,
+    "sha256": "fca13390dcc1013e93032efe7e056c6fa721492486fe36caf20076eb97523a95",
+    "git_blob": "b22fe1ecad07f2c73330fa7371e8ddc538963fd5"
+  }
+}
