@@ -1,0 +1,123 @@
+{
+  "source": "f091d78049d91f566e420a26ffd3847568973b73",
+  "source_tree": "e4c6f29e440d1e357abc64eb2f4415d1c2014765",
+  "purpose": "Bambi558 candidate fix stage attempt1, skipped fallback replaced by real dependency fault injection and actual small PyMC fits; G0 baseline2of2 remainsclosed",
+  "base_image": "python@sha256:dddbf9c143d4d3dff1c68e104645bac612823d33ef09571c71eff41faf07c194",
+  "target_seconds": 3000,
+  "absolute_seconds": 3600,
+  "cleanup_reserve_seconds": 180,
+  "network_bytes_cap": 8589934592,
+  "artifact_cap": 67108864,
+  "branch": "validate-bambi558-fallback-candidate-i2",
+  "execution_enabled": true,
+  "attempt": 2,
+  "max_issue_validation_attempts": 2,
+  "host_memory_admission": 13958643712,
+  "host_disk_admission": 25769803776,
+  "native_container_memory": "12g",
+  "native_container_pids": 4096,
+  "ci_timing_evidence": "../bambi558-branch-comparison/current-ci-extracted.json: pinned-main successful upstream full job 558/889/898/1208s plus docs156s; old dev native M0 1913s, not this baseline proof",
+  "venue": "GitHubhostednativeAMD64Docker; noMacDocker/externaldiskaccess",
+  "lanes": {
+    "py312-cvm": {
+      "env": "py312",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 840,
+      "pytest_entry_floor_seconds": 1020,
+      "pytest_basis": "1.5x complete upstream main job 558s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py312-numba": {
+      "env": "py312",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1340,
+      "pytest_entry_floor_seconds": 1520,
+      "pytest_basis": "1.5x complete upstream main job 889s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py313-cvm": {
+      "env": "py313",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 1350,
+      "pytest_entry_floor_seconds": 1530,
+      "pytest_basis": "1.5x complete upstream main job 898s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py313-numba": {
+      "env": "py313",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1820,
+      "pytest_entry_floor_seconds": 2000,
+      "pytest_basis": "1.5x complete upstream main job 1208s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "docs": {
+      "env": "dev",
+      "linker": "cvm",
+      "role": "docs"
+    }
+  },
+  "pixi_version": "0.62.2",
+  "quarto_version": "1.8.26",
+  "closure_policy": "One retained complete fca13390 lock from actual same-f091 attempt1 installed with --frozen in every lane, no solve; verify exact bytes before/after install and before baseline/freeze. Same239file source identity fixes pyproject; retained full import/tool lock reconciliation applies.",
+  "approval_state": "ACTUAL_CLAUDE66_318S_APPROVE_FINAL_CANDIDATE_AND_PUBLIC_DIAGNOSTIC_CODEX_AGREES",
+  "host_total_memory_admission": 15032385536,
+  "diagnostic_policy": "Dependency fault injection non-gating for unmodified baseline; successful real semantics evidence remains REQUIRED before candidate authoring.",
+  "resource_basis": "Same fullfourlinker/Python lanes plus docs acceptedbaseline42867434814: max7594491904B,969.50s. Same12GiB container/13GiBavailable/14GiBtotal/24GiBdisk/4CPU. Candidateadds11executedcasesreplacing1skip and6targetedmutantsinpy312cvm; no changedproduction/runtimeclosure. Entryguardsunchanged; runtimecapacityrechecked.",
+  "time_basis": "Measuredslowestfullbaseline969.50s/target3000; candidate focusedtests fourreal20drawfitcases perlane,6mutationruns inpy312cvm reservedup to1080s plus unchangedfullsuitecap840s inthatlane. Otherlanes unchangedfullcaps. Guard rejects insufficientremainingfullsuite time; no latepartialpass.",
+  "validation_environment_differences": "Upstream required commands preserved; Docker, observer plugin, junit/durations, PYTHONPATH=/packet, thread variables2 and controlled tool/source mounts disclosed. Test networking bridge now matches upstream accessibility.",
+  "prior_failed_run": 42714597762,
+  "correction_rounds_used": 1,
+  "no_more_harness_correction_after_failure": true,
+  "canonical_lock": {
+    "path": "pixi.lock",
+    "mode": "100644",
+    "bytes": 627098,
+    "sha256": "fca13390dcc1013e93032efe7e056c6fa721492486fe36caf20076eb97523a95",
+    "git_blob": "b22fe1ecad07f2c73330fa7371e8ddc538963fd5"
+  },
+  "candidate_fix_attempts_used": 1,
+  "max_candidate_fix_attempts": 2,
+  "candidate_fix_attempt": 2,
+  "baseline_attempts_used": 2,
+  "max_baseline_attempts": 2,
+  "baseline_run": 42867434814,
+  "baseline_phase_closed": true,
+  "attempt_budget_basis": "continuous-control-plane-policy.md:656 bounded fix attempts; actual results review approves distinct candidate stage, not thirdG0",
+  "candidate_patch_sha256": "69abdeb1115eca3519c40c29e2e4512890294ab592c4054b67623634223adaf7",
+  "overlay": [
+    {
+      "path": "tests/test_model_construction.py",
+      "packet_file": "candidate-test_model_construction.py",
+      "original": {
+        "path": "tests/test_model_construction.py",
+        "git_blob": "f97a5fdf67068b10270b49dada3984468fa41b16",
+        "mode": "100644",
+        "bytes": 21189,
+        "sha256": "0e948c4231c45f3ec6cee835353894eddb95a6562ab7472904e250734fda05de"
+      },
+      "candidate": {
+        "path": "tests/test_model_construction.py",
+        "git_blob": "56656a93dddfb0ee8edc1058ac3cfdeeb9583b01",
+        "mode": "100644",
+        "bytes": 27422,
+        "sha256": "0beaaf0bc7b396a410e88a0f5ffd93c92b8987cdd272b61288fdcfac54787b7f"
+      }
+    }
+  ],
+  "mutation_lane": "py312-cvm",
+  "smoke_evidence": "phase-qualified imports-smoke.json and offline-imports-smoke.json, no PID filenamecollision",
+  "candidate_expected_collected_count": 400,
+  "candidate_expected_fallback_cases": 11,
+  "candidate_prepare_phase_seconds_mutation_lane": 1500,
+  "preseal_black_constraint": "RequestfaithfulDockerprecedence: exactpinned25.9Black check occurs inexistingearlyDockerpreparebeforefocus/mutations/fullvalidation; no separatebootstrap/hostprojecttools. Needsactualcorrectedpacketapproval.",
+  "prior_failed_candidate_run": 42878471059,
+  "source_assertion_correction": "Existingbambi.utils.as_dataset convertsactualPyMC6DataTreegroup toDataset, retainsallfinite/dim/attrassertions; nodepsorproductionchange.",
+  "legacy_G0_fields": [
+    "attempt",
+    "max_issue_validation_attempts",
+    "correction_rounds_used",
+    "no_more_harness_correction_after_failure"
+  ],
+  "legacy_scope": "TheseunchangedinheritedflatfieldsarehistoricalG0; G0used2of2closed. ThisisoneactualcandidateFIX2of2 perreviewedcandidatebudget, notanotherG0orreset. FailurewasnewtestAPIassumption, notenvironment/resource/harnessbootstrap."
+}
