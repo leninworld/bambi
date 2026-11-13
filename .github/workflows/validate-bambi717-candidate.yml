@@ -1,0 +1,49 @@
+name: Validate Bambi mediation complete candidate
+on:
+  push:
+    branches: [validate-mediation-717-candidate-i2]
+permissions:
+  contents: read
+concurrency:
+  group: bambi717-candidate-first
+  cancel-in-progress: false
+jobs:
+  measure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Record one global time and network origin before checkout
+        run: |
+          python3 - <<'PY'
+          import os,time
+          from pathlib import Path
+          routes = {s.split()[0] for s in Path('/proc/net/route').read_text().splitlines()[1:] if s.split()[1] == '00000000'}
+          assert len(routes) == 1
+          interface = routes.pop()
+          rx = (Path('/sys/class/net')/interface/'statistics/rx_bytes').read_text().strip()
+          with open(os.environ['GITHUB_ENV'], 'a') as f:
+              f.write(f'M0_STARTED={time.time()}\nM0_INTERFACE={interface}\nM0_RX_STARTED={rx}\n')
+          PY
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        timeout-minutes: 3
+        with:
+          path: packet
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        timeout-minutes: 3
+        with:
+          repository: bambinos/bambi
+          ref: 9552e1d0ece1ce3c209f9b17fa656c2e57924970
+          path: upstream
+          fetch-depth: 0
+          persist-credentials: false
+      - name: One complete native baseline measurement
+        run: python3 packet/validation/bambi717/hosted.py
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        timeout-minutes: 3
+        with:
+          name: bambi717-candidate-${{ github.run_id }}
+          path: ${{ runner.temp }}/bambi717-candidate-${{ github.run_id }}/evidence
+          if-no-files-found: warn
+          retention-days: 7
