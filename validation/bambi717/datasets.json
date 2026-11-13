@@ -1,0 +1,37 @@
+{
+  "adults": {
+    "filename": "adults.csv",
+    "checksum": "27a5270ba720125dfb24a7708cbee0218b2ead36248ae244813655d03320e43e",
+    "cache_bytes": 779724
+  },
+  "ANES": {
+    "filename": "ANES_2016_pilot.csv",
+    "checksum": "3106beb6ded5a592ea0405d23b868bd8e74c259d7a7f5242c907555692905772",
+    "cache_bytes": 10660
+  },
+  "carclaims": {
+    "filename": "carclaims.csv",
+    "checksum": "74924bf5f0a6e5aa5453d87845cea05e6b41bb2052cf6f096d7f102235ae5cdf",
+    "cache_bytes": 2665277
+  },
+  "sleepstudy": {
+    "filename": "sleepstudy.csv",
+    "checksum": "0a002bec8be2fa9d40dbbf3d5038e614d113a4fd5bf8813f6f4271c3d6294675",
+    "cache_bytes": 2695
+  },
+  "bikes": {
+    "filename": "bike_sharing.csv",
+    "checksum": "3e1844b6da435f910b10899e18188568f7d789c715a286c9c6c2ca23833ee7ac",
+    "cache_bytes": 1139371
+  },
+  "mtcars": {
+    "filename": "mtcars.csv",
+    "checksum": "c802190c43e02246da9c6c9c3f13a58f076cc6b77922f4d9766a3c6bdb1b52bd",
+    "cache_bytes": 1281
+  },
+  "kidney": {
+    "filename": "kidney.csv",
+    "checksum": "46e49372b4e8c3044dca0ffbb4eb2244f56d7398746802e351baac6c12625564",
+    "cache_bytes": 1835
+  }
+}
