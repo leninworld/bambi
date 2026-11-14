@@ -1,0 +1,88 @@
+{
+  "base_image": "python@sha256:dddbf9c143d4d3dff1c68e104645bac612823d33ef09571c71eff41faf07c194",
+  "target_seconds": 3000,
+  "absolute_seconds": 3600,
+  "network_bytes_cap": 8589934592,
+  "artifact_cap": 67108864,
+  "host_memory_admission": 13958643712,
+  "host_total_memory_admission": 15032385536,
+  "host_disk_admission": 25769803776,
+  "native_container_memory": "12g",
+  "native_container_pids": 4096,
+  "pixi_version": "0.62.2",
+  "quarto_version": "1.8.26",
+  "source": "babde99afb10a2b542e6c993074313ac2139f476",
+  "source_tree": "8231134345682a6f424537d1440007e9bac11ba8",
+  "branch": "validate-mediation-717-main-i1",
+  "workflow_path": ".github/workflows/validate-mediation-717-main-i1.yml",
+  "execution_enabled": true,
+  "attempt": 5,
+  "ordinaryLimit": 2,
+  "ordinaryConsumedBefore": 2,
+  "runtimeConsumedBefore": 4,
+  "maxRuntimeAttempt": 5,
+  "priorExplicitExceptionsConsumed": 2,
+  "approval_state": "DISABLED_PENDING_EXACT_WHOLE_MAIN_EXECUTION_REVIEW",
+  "cleanup_reserve_seconds": 180,
+  "canonical_lock_sha256": "fca13390dcc1013e93032efe7e056c6fa721492486fe36caf20076eb97523a95",
+  "canonicalLockIsUpstreamTracked": false,
+  "contribution_paths": [
+    "docs/_quarto.yml",
+    "docs/notebooks/gallery.yml",
+    "docs/notebooks/mediation_analysis.ipynb",
+    "docs/notebooks/thumbnails/mediation_analysis.png"
+  ],
+  "clock": "actual exact workflow.created_at, queue-inclusive same3000/3600 across5jobs;5bounded15s256KiBrunmetadataGETs explicitlyrun-scoped",
+  "aggregateCPU": 20,
+  "aggregateContainerMemoryGiB": 60,
+  "fullSourceBlobs": 239,
+  "fullCurrentCollectionsMandatoryEqual": true,
+  "sourceMainAndPoliciesFreshBeforePushRequired": true,
+  "lanes": {
+    "py312-cvm": {
+      "env": "py312",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 840,
+      "pytest_entry_floor_seconds": 1020,
+      "pytest_basis": "1.5x complete upstream main job 558s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py312-numba": {
+      "env": "py312",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1340,
+      "pytest_entry_floor_seconds": 1520,
+      "pytest_basis": "1.5x complete upstream main job 889s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py313-cvm": {
+      "env": "py313",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 1350,
+      "pytest_entry_floor_seconds": 1530,
+      "pytest_basis": "1.5x complete upstream main job 898s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "py313-numba": {
+      "env": "py313",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1820,
+      "pytest_entry_floor_seconds": 2000,
+      "pytest_basis": "1.5x complete upstream main job 1208s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing."
+    },
+    "science-docs": {
+      "env": "dev",
+      "linker": "cvm",
+      "role": "docs",
+      "gate_seconds": 420,
+      "science_seconds": 1200,
+      "site_seconds": 300
+    }
+  },
+  "packetFileCount": 35,
+  "tracked_generated_outputs_restored_after_full_render_only": [
+    "docs/changelog.qmd"
+  ],
+  "science_pre_gate_entry_floor_seconds": 2100
+}
