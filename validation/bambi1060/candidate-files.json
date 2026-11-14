@@ -1,0 +1,18 @@
+{
+  "bambi/representation.py": {
+    "bytes": 29459,
+    "sha256": "49bd43975e4a4af35950b3a5b5c278c98b2eb187990ce73e8ded6755bfc5adf0"
+  },
+  "bambi/models.py": {
+    "bytes": 72851,
+    "sha256": "9f47810398a0b706f2dc053fbf7e6ab359edf28ac25f8edb65fbb70263621caa"
+  },
+  "tests/test_representation.py": {
+    "bytes": 34957,
+    "sha256": "84881c6fc75f1efdccd1155e21f9184f03653dab3801138e9b665d01c1d07eb2"
+  },
+  "docs/notebooks/model_representation.ipynb": {
+    "bytes": 6505,
+    "sha256": "37ea6c79b157868583ad3983f9bbecb9299b641d2f767128c18a064db8b781c1"
+  }
+}

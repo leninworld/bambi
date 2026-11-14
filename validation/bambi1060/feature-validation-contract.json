@@ -1,0 +1,33 @@
+{
+  "state": "DRAFT_IDS_FROM_ACTUAL_SOURCE_AST_NOT_RUNTIME_VERIFIED",
+  "baselineExpectedAssertionFailureIDs": [
+    "tests/test_representation.py::test_public_response_and_predictor_equations",
+    "tests/test_representation.py::test_public_group_hierarchy_and_offset_equations",
+    "tests/test_representation.py::test_public_distributional_equations"
+  ],
+  "consumerIDs": [
+    "test_public_response_and_predictor_equations",
+    "test_every_native_family_has_mathematics_and_independent_density[gaussian]"
+  ],
+  "coverage": {
+    "requiredNotClaimedPassed": [
+      "all29builtinfamilies",
+      "allD2specialprobabilitytransforms",
+      "independentNumPySciPyIRvsbuiltPyMCfixedpointdensity",
+      "centeringoffsetshierarchyandvectornumericoracles",
+      "HSGPbasisandactualkernelspectraldensity",
+      "weightedcensoredtruncatedconstrainedresponsefactors",
+      "priorshyperpriorHorseshoeFlatHalfFlat",
+      "customfunctionsnamednotcalled",
+      "aliasesescapingthresholds",
+      "determinismmodeldataRNGimmutabilityunbuiltbuiltfitted",
+      "negativewrongIRfalsification",
+      "sevenexampleactualLaTexoutputsfullQuartoMathJax"
+    ]
+  },
+  "allCandidateTestsRequired": true,
+  "noTitleDerivedScopeNarrowing": true,
+  "baselineFullModelProbe": "PACKET_ONLY native_drop_first_probe.py::test_drop_first_full_model_preserves_actual_basis_weight_contract",
+  "baselineFullModelProbeExpectedOutcome": "ONEscience-docsbaselinecall:0or1/XML retained/no skip/xfail. FAIL nevercalledPASSorwaived anddoesNOTstopindependentcandidatework. Fullmodeldrop_firstgapOPENforfinishreview/disclosure; no candidateprobeexpectation/backendfix. Otherfourlanes NOT_RUNhonest.",
+  "staticAuthoredCountNotActualCollection": 92
+}
