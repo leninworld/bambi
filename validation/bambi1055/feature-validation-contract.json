@@ -1,0 +1,31 @@
+{
+  "state": "PROPOSED_CURRENT_AUTHORING_BYTES_NOT_TESTED",
+  "newTestFile": "tests/test_causal.py",
+  "staticCases": 146,
+  "staticFunctions": 40,
+  "actualCollectionRequired": true,
+  "consumerIDs": [
+    "test_standardized_mean_and_ordered_dose_response",
+    "test_native_categorical_intervention_keeps_training_contrasts"
+  ],
+  "baseline": "Actual MAIN module absence; no invented bug reproduction",
+  "coverage": [
+    "all11estimands",
+    "R1population_vs_scale",
+    "R2declarations",
+    "native7continuous_andBernoulli_expectedmeans",
+    "custom_and_wrapped_rejections",
+    "aliases_and_distributional_auxiliaries",
+    "row_identity_missing_levels",
+    "original_membership_weights",
+    "CATEconditional_reference",
+    "marginalRROR_independentfractions",
+    "noMutation_noRNG",
+    "stateful_scale_center_bs_categorical",
+    "two_genuine_seeded_NUTS_fits",
+    "draw_summary_intervals",
+    "main_group_panel_plotting"
+  ],
+  "fullFeatureAndFullSuiteEachRunAllNewCases": true,
+  "wholeNotebookTwoAdditionalRealFits": true
+}
