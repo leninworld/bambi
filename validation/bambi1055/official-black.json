@@ -1,0 +1,36 @@
+{
+  "filename": "black-25.9.0-py3-none-any.whl",
+  "url": "https://files.pythonhosted.org/packages/1b/46/863c90dcd3f9d41b109b7f19032ae0db021f0b2a81482ba0a1e28c84de86/black-25.9.0-py3-none-any.whl",
+  "bytes": 203363,
+  "sha256": "474b34c1342cdc157d307b56c4c65bce916480c4a8f6551fdc6bf9b486a7c4ae",
+  "version": "25.9.0",
+  "noDeps": true,
+  "closureProofSHA256": "513f639196207384dcff6865d21ea7b84fda5eb6b0d5a4c138ae3c36bb847904",
+  "baseBlackUnmodified": "25.12 frozen installation remains unchanged",
+  "coreDependencyVersions": {
+    "dev": {
+      "click": "8.5.1",
+      "mypy-extensions": "1.2.0",
+      "packaging": "26.3",
+      "pathspec": "1.1.1",
+      "platformdirs": "4.14.5",
+      "pytokens": "0.4.1"
+    },
+    "py312": {
+      "click": "8.5.1",
+      "mypy-extensions": "1.2.0",
+      "packaging": "26.3",
+      "pathspec": "1.1.1",
+      "platformdirs": "4.14.5",
+      "pytokens": "0.4.1"
+    },
+    "py313": {
+      "click": "8.5.1",
+      "mypy-extensions": "1.2.0",
+      "packaging": "26.3",
+      "pathspec": "1.1.1",
+      "platformdirs": "4.14.5",
+      "pytokens": "0.4.1"
+    }
+  }
+}
