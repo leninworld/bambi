@@ -1,0 +1,147 @@
+{
+  "base_image": "python@sha256:dddbf9c143d4d3dff1c68e104645bac612823d33ef09571c71eff41faf07c194",
+  "target_seconds": 3000,
+  "absolute_seconds": 3600,
+  "network_bytes_cap": 8589934592,
+  "artifact_cap": 67108864,
+  "host_memory_admission": 13958643712,
+  "host_total_memory_admission": 15032385536,
+  "host_disk_admission": 25769803776,
+  "native_container_memory": "12g",
+  "native_container_pids": 4096,
+  "pixi_version": "0.62.2",
+  "quarto_version": "1.8.26",
+  "source": "babde99afb10a2b542e6c993074313ac2139f476",
+  "source_tree": "8231134345682a6f424537d1440007e9bac11ba8",
+  "branch": "codex/validate-causal-extension-1055-main-i5",
+  "workflow_path": ".github/workflows/validate-causal-extension-1055-main-i5.yml",
+  "execution_enabled": true,
+  "attempt": 5,
+  "ordinaryLimit": 2,
+  "ordinaryConsumedBefore": 2,
+  "runtimeConsumedBefore": 4,
+  "maxRuntimeAttempt": 5,
+  "priorExplicitExceptionsConsumed": 2,
+  "approval_state": "ACTUAL_CLAUDE_I5_APPROVED_ROOT_CURRENT_GATES_REQUIRED",
+  "cleanup_reserve_seconds": 180,
+  "canonical_lock_sha256": "fca13390dcc1013e93032efe7e056c6fa721492486fe36caf20076eb97523a95",
+  "canonicalLockIsUpstreamTracked": false,
+  "contribution_paths": [
+    "bambi/causal/__init__.py",
+    "bambi/causal/effects.py",
+    "bambi/causal/types.py",
+    "bambi/causal/validate.py",
+    "bambi/causal/plots.py",
+    "tests/test_causal.py",
+    "docs/notebooks/causal_effects.ipynb",
+    "pyproject.toml",
+    "docs/_quarto.yml"
+  ],
+  "clock": "Exact original workflow.created_at queue-inclusive same3000/3600 acrossfiveVMs; same scopedonce-per-job15s256KiBread. No newclockafterbaselines/build/oracles.",
+  "aggregateCPU": 20,
+  "aggregateContainerMemoryGiB": 60,
+  "fullSourceBlobs": 239,
+  "fullCurrentCollectionsMandatoryEqual": true,
+  "sourceMainAndPoliciesFreshBeforePushRequired": true,
+  "lanes": {
+    "py312-cvm": {
+      "env": "py312",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 840,
+      "pytest_entry_floor_seconds": 1020,
+      "pytest_basis": "SUPERSEDED_AT_RUNTIME_BY_MEASURED_FULL_FEATURE_BUDGET_FROM_SHARED_HELPER; originalstaticcap retainedonlyaspre-gateplaceholder",
+      "historical_full_test_seconds": 452
+    },
+    "py312-numba": {
+      "env": "py312",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1340,
+      "pytest_entry_floor_seconds": 1520,
+      "pytest_basis": "SUPERSEDED_AT_RUNTIME_BY_MEASURED_FULL_FEATURE_BUDGET_FROM_SHARED_HELPER; originalstaticcap retainedonlyaspre-gateplaceholder",
+      "historical_full_test_seconds": 736
+    },
+    "py313-cvm": {
+      "env": "py313",
+      "linker": "cvm",
+      "role": "test",
+      "pytest_seconds": 1350,
+      "pytest_entry_floor_seconds": 1530,
+      "pytest_basis": "SUPERSEDED_AT_RUNTIME_BY_MEASURED_FULL_FEATURE_BUDGET_FROM_SHARED_HELPER; originalstaticcap retainedonlyaspre-gateplaceholder",
+      "historical_full_test_seconds": 537
+    },
+    "py313-numba": {
+      "env": "py313",
+      "linker": "numba",
+      "role": "test",
+      "pytest_seconds": 1820,
+      "pytest_entry_floor_seconds": 2000,
+      "pytest_basis": "SUPERSEDED_AT_RUNTIME_BY_MEASURED_FULL_FEATURE_BUDGET_FROM_SHARED_HELPER; originalstaticcap retainedonlyaspre-gateplaceholder",
+      "historical_full_test_seconds": 491
+    },
+    "science-docs": {
+      "env": "dev",
+      "linker": "cvm",
+      "role": "docs",
+      "gate_seconds": 420,
+      "site_seconds": 300,
+      "example_seconds": 600
+    }
+  },
+  "packetFileCount": 46,
+  "tracked_generated_outputs_restored_after_full_render_only": [
+    "docs/changelog.qmd"
+  ],
+  "shipping_early_seconds": 300,
+  "feature_gate_seconds": 420,
+  "full_test_budget": "ceil(1.5xhistorical_original+2xactual_complete_feature_gate+60), entryfloor+180; authoritativehostandinside samehelper, no clockreset or testcasecut",
+  "referenceHistoricalSeconds": "452/736/537/491 are upward-rounded actual prior717MAIN5 fullsuite timings, not1055passes",
+  "candidateFormattingTransformation": {
+    "state": "PROPOSED_DOCKER_ONLY_NOT_EXECUTED",
+    "after": "candidate-apply and frozen-Pixi-compatibility",
+    "before": "all-files hooks/pylint/expensive feature fits",
+    "officialWheel": "black-25.9.0-py3-none-any.whl",
+    "upstreamHookUnchangedActualVersionRecordedSeparately": true,
+    "files": [
+      "bambi/causal/__init__.py",
+      "bambi/causal/effects.py",
+      "bambi/causal/types.py",
+      "bambi/causal/validate.py",
+      "bambi/causal/plots.py",
+      "tests/test_causal.py"
+    ],
+    "sameNormalizedASTRequired": true,
+    "finalTestedNineByteReviewRequired": true
+  },
+  "newTests": {
+    "staticCases": 146,
+    "staticFunctions": 40,
+    "actualCollectionRequired": true,
+    "genuineNUTSFixtureCountPerPytestProcess": 2,
+    "chainsPerFit": 2,
+    "drawsPerChain": 60,
+    "tunePerChain": 60,
+    "cores": 1,
+    "seeds": [
+      105501,
+      105502
+    ],
+    "testSuiteDuplicatesFeatureFits": true,
+    "budget": "2xactual COMPLETE feature elapsed retained in mandatory full-suite cap; no fitted-case omissions"
+  },
+  "newNotebook": {
+    "path": "docs/notebooks/causal_effects.ipynb",
+    "genuineFits": 2,
+    "draws": 250,
+    "tune": 250,
+    "chains": 2,
+    "exampleSeconds": 600,
+    "separateFromFeatureFits": true,
+    "renderAllFiguresActualVisualReviewRequired": true
+  },
+  "baselineFeatureContract": "Actual installed MAIN has no bambi.causal. Record exact absence/parent import; no pretend mathematical bug reproduction. Full original MAIN5 passes retained as historical only; candidate all four suites fresh.",
+  "sourceAndLock": "Same actual MAIN babde source239 blobs/fca synthetic canonical lock; package-list-only pyproject overlay MUST pass actual pixi frozen install with lock unchanged, not inferred from unchanged dependency strings.",
+  "additional_attempt_authorized": true,
+  "proposedAdditionalException": 1
+}
