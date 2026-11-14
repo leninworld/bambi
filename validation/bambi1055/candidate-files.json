@@ -1,0 +1,38 @@
+{
+  "bambi/causal/__init__.py": {
+    "bytes": 282,
+    "sha256": "1d15b72e13d462c1e3d1df277b10018be2a732534cd9f8791fa43f8680771a68"
+  },
+  "bambi/causal/effects.py": {
+    "bytes": 15031,
+    "sha256": "5f406c5d7352e1fadb201f2f9654d6121209e97d1a3354d4f849cb2906690f0a"
+  },
+  "bambi/causal/types.py": {
+    "bytes": 909,
+    "sha256": "3a8865a8c870d6e750ce3424a152864da8785a8ace1ded41af2d74c893e67de5"
+  },
+  "bambi/causal/validate.py": {
+    "bytes": 13393,
+    "sha256": "fb42123a6e12b7f58537726027367cefe1de34095d3e233b41c09459f999a493"
+  },
+  "bambi/causal/plots.py": {
+    "bytes": 2137,
+    "sha256": "e897d7adfd6985abccb6fc522f491d15aa4fd5eaaa9601d44259677b041bfad3"
+  },
+  "tests/test_causal.py": {
+    "bytes": 36203,
+    "sha256": "9f8c8bf7a61fed2cdf44fe630cd7db418cfaafbd4854296caac2f8c644fb420f"
+  },
+  "docs/notebooks/causal_effects.ipynb": {
+    "bytes": 20335,
+    "sha256": "7e87a4d05d9f89e4dc9772e8165cf507ce8f88a7da5edb47345acf32720feb8d"
+  },
+  "pyproject.toml": {
+    "bytes": 6198,
+    "sha256": "2fb2ca23c8987f126a4a709c68922280054158c42f5928fe490e065581506c7c"
+  },
+  "docs/_quarto.yml": {
+    "bytes": 5535,
+    "sha256": "aa4d4aa77c79f7162cc6d2326858423153d3741bd90ce32fc00d57777f71dce8"
+  }
+}
