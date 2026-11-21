@@ -1,0 +1,344 @@
+/* --- */
+
+/* css styles */
+
+/*
+:root {
+  --site-color-primary:  #F9F4D8;
+  --site-color-primary: #EE8320;
+  --site-color-primary: #C29A68;
+}
+*/
+
+:root {
+    --bs-blue: #2780e3;
+    --bs-indigo: #6610f2;
+    --bs-purple: #613d7c;
+    --bs-pink: #e83e8c;
+    --bs-red: #ff0039;
+    --bs-orange: #f0ad4e;
+    --bs-yellow: #ff7518;
+    --bs-green: #3fb618;
+    --bs-teal: #20c997;
+    --bs-cyan: #9954bb;
+    --bs-white: #fff;
+    --bs-gray: #6c757d;
+    --bs-gray-dark: #373a3c;
+    --bs-gray-100: #f8f9fa;
+    --bs-gray-200: #e9ecef;
+    --bs-gray-300: #dee2e6;
+    --bs-gray-400: #ced4da;
+    --bs-gray-500: #adb5bd;
+    --bs-gray-600: #6c757d;
+    --bs-gray-700: #495057;
+    --bs-gray-800: #373a3c;
+    --bs-gray-900: #212529;
+    --bs-default: #373a3c;
+    --bs-primary: #2780e3;
+    --bs-secondary: #373a3c;
+    --bs-success: #3fb618;
+    --bs-info: #9954bb;
+    --bs-warning: #ff7518;
+    --bs-danger: #ff0039;
+    --bs-light: #f8f9fa;
+    --bs-dark: #373a3c;
+    --bambi-green-clearer: #1f86ac;
+    --bambi-green: #196d8c;
+    --bambi-green-darker: #0a3c4e;
+}
+
+#quarto-header {
+  border-bottom: 1px solid #dee2e6;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+#quarto-header nav {
+  max-width: 1325px;
+  margin: auto;
+}
+
+#quarto-header .nav-link {
+  margin-left: 1.6rem;
+  margin-right: 1.6rem;
+  padding-right: 0.01rem;
+  padding-left: 0.01rem;
+  font-size: 20px;
+  color: var(--bs-default);
+}
+
+#quarto-header .nav-link .bi { /*e.g. Github logo*/
+  font-size: 20px;
+}
+
+/* Navbar links animation */
+.nav-item .nav-link {
+  position: relative;
+  text-decoration: none;
+}
+
+/* Create the animated underline */
+.nav-item .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background-color: var(--bs-default);
+
+  /* Start collapsed at center */
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+/* Animate underline on hover */
+.nav-item .nav-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Keep underline visible for the active link */
+.nav-item .nav-link.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.navbar {
+  background-color: #ffffff;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.navbar #quarto-search.type-overlay .aa-Autocomplete svg.aa-SubmitIcon {
+  color: var(--bs-default);
+}
+
+.navbar-logo {
+  max-height: 82px;
+}
+
+.navbar-brand img {
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover img {
+  transform: scale(1.04);
+}
+
+
+.quarto-navbar-tools {
+  font-size: 21px; /*so gh logo is larger*/
+}
+
+div.sidebar-item-container .active {
+  color: var(--bambi-green);
+  font-weight: 600;
+}
+
+/* Controls */
+.sidebar nav[role=doc-toc] ul>li>a.active, .sidebar nav[role=doc-toc] ul>li>ul>li>a.active {
+  color: var(--bambi-green) !important;
+  border-left: 2px solid var(--bambi-green);
+}
+
+.sidebar nav[role=doc-toc] ul>li>a:hover, .sidebar nav[role=doc-toc] ul>li>ul>li>a:hover {
+    color: var(--bambi-green-clearer) !important;
+}
+
+.sidebar nav[role=doc-toc]>ul a {
+  border-left: 2px solid white;
+}
+
+/*Left sidebar*/
+.sidebar-item-container .text-start {
+  font-weight: 600;
+  font-size: 16px !important;
+}
+
+.sidebar-item-text {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.sidebar-item-section {
+  padding-top: 16px;
+}
+
+/* dataframe tables */
+.dataframe {
+  font-size: 15px;
+}
+
+/* center dataframe tables */
+.dataframe, .dataframe table {
+  width: inherit;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* This makes the "main" page wider than by default */
+@media (min-width: 992px) {
+    body.docked .page-columns {
+        display: grid;
+        gap: 0;
+        grid-template-columns:
+            [screen-start] 1.5em
+            [screen-start-inset] 4fr /*Changed from 5fr to 4fr*/
+            [page-start] minmax(25px, 50px)
+            [page-start-inset] minmax(50px, 150px)
+            [body-start-outset] minmax(25px, 50px)
+            [body-start] 1.5em
+            [body-content-start] minmax(500px, calc(800px - 3em))
+            [body-content-end] 1.5em
+            [body-end] minmax(25px, 50px)
+            [body-end-outset] minmax(50px, 150px)
+            [page-end-inset] minmax(25px, 50px)
+            [page-end] 4fr /*Changed from 5fr to 4fr*/
+            [screen-end-inset] 1.5em
+            [screen-end];
+    }
+}
+
+a {
+    color: var(--bambi-green);
+}
+
+a:hover {
+    color: var(--bambi-green-darker);
+}
+
+.sidebar-navigation li a:hover {
+    text-decoration: none;
+    color: var(--bambi-green-clearer);
+}
+
+
+/*Remove top and bottom padding from navbar image*/
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/*Gallery listings*/
+.listing-title {
+  text-decoration: none;
+  font-size: 19px;
+}
+
+.listing-subtitle {
+  font-size: 16px;
+}
+
+/*Images are centered vertically*/
+.listing-image {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/*Add hover effect to card*/
+.card {
+  transition:
+    .3s transform cubic-bezier(.155, 1.105, .295, 1.12),
+    .3s box-shadow,
+    .3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+}
+
+.card:hover{
+  transform: scale(1.01);
+  box-shadow: 0 6px 14px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+/*Make the entire card clickable*/
+.card {
+  position: relative;
+}
+
+.card a::before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+
+/*Add scroll bar if needed, nothing if not*/
+section > .level2 {
+  overflow-x: auto;
+}
+
+/* Form styles */
+
+.bambi-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.feedback-input {
+  background-color: transparent;
+  border-radius: 5px;
+  border: 2px solid #dcdcdc;
+  box-sizing: border-box;
+  outline: 0;
+  padding: 10px;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.feedback-input:focus {
+  border: 2px solid #12698a;
+}
+
+.form-submit {
+  background: #12698a;
+  border-radius: 5px;
+  border: 2px solid #12698a;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 8px;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.form-submit:hover {
+  opacity: 0.8;
+}
+
+
+/* styles for parameter tables, etc.. ----
+*/
+
+.doc-section dt code {
+    background: none;
+}
+
+.doc-section dt {
+    background-color: rgba(233, 236, 239, 0.65);
+    display: block;
+}
+
+.doc-section dl dd {
+    margin-left: 3rem;
+    margin-top: 0.25rem;
+}
+
+code .parameter-annotation a:any-link {
+  text-decoration: underline;
+  color: var(--bambi-green);
+}
+
+code .parameter-annotation a:hover {
+  color: var(--bambi-green-darker);
+  text-decoration: underline;
+}
+
+.parameter-annotation code {
+  padding: 0;
+}

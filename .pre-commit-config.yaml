@@ -1,0 +1,26 @@
+fail_fast: true
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+        args: [--diff, --check, --color]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-toml
+        types: [toml]
+      - id: check-yaml
+        types: [yaml]
+      - id: end-of-file-fixer
+        types: [text]
+      - id: check-added-large-files
+        name: check-added-large-files (general, 2MB)
+        args: ["--maxkb=2048"]
+        exclude: \.ipynb$
+      - id: check-added-large-files
+        name: check-added-large-files (notebooks, 10MB)
+        args: ["--maxkb=10240"]
+        files: \.ipynb$
