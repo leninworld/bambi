@@ -1,0 +1,7 @@
+[MAIN]
+jobs=1
+persistent=no
+
+[MESSAGES CONTROL]
+disable=all
+enable=unused-import,reimported,undefined-variable
