@@ -1,0 +1,707 @@
+import arviz as az
+import matplotlib
+import numpy as np
+import pandas as pd
+import pytest
+from seaborn.objects import Plot
+
+import bambi as bmb
+from bambi.interpret import plot_comparisons, plot_predictions, plot_slopes
+from bambi.interpret.effects import comparisons, predictions, slopes
+from bambi.interpret.plots import PlottingConfig, plot
+
+# Render plots to a buffer instead of rendering to stddout
+matplotlib.use("Agg")
+
+
+def summarize_draws(draws, prob, dims=("chain", "draw")):
+    """Mean and HDI bounds of `draws`, computed over `dims`."""
+    hdi = az.hdi(draws, prob=prob, dim=list(dims))
+    return [
+        draws.mean(dims).item(),
+        hdi.sel(ci_bound="lower").item(),
+        hdi.sel(ci_bound="upper").item(),
+    ]
+
+
+# Improvement:
+# * Test the actual plots are what we are indeed the desired result.
+# * Test using the dictionary and the list gives the same plot
+# * Use the same function for different models, e.g. average by, transforms, etc.
+
+
+class TestCommon:
+    """
+    Tests arguments that are common to both 'plot_predictions', 'plot_comparisons',
+    and 'plot_slopes' such as figure object and uncertainty arguments.
+    """
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    def test_use_hdi(self, mtcars_fixture, target):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, "hp", "am", use_hdi=False)
+        assert isinstance(result, Plot)
+        result = plot_predictions(model, idata, ["hp", "cyl", "gear"], target=target, use_hdi=False)
+        assert isinstance(result, Plot)
+        result = plot_slopes(model, idata, "hp", "am", use_hdi=False)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    def test_hdi_prob(self, mtcars_fixture, target):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, "am", "hp", prob=0.8)
+        assert isinstance(result, Plot)
+        result = plot_predictions(model, idata, ["hp", "cyl", "gear"], target=target, prob=0.8)
+        assert isinstance(result, Plot)
+        result = plot_slopes(model, idata, "hp", "am", prob=0.8)
+        assert isinstance(result, Plot)
+
+        with pytest.raises(
+            ValueError,
+            match="'prob' values must be between 0 and 1 \\(exclusive\\). Got 1.1.",
+        ):
+            plot_comparisons(model, idata, "am", "hp", prob=1.1)
+
+        with pytest.raises(
+            ValueError,
+            match="'prob' values must be between 0 and 1 \\(exclusive\\). Got 1.1.",
+        ):
+            plot_predictions(model, idata, ["hp", "cyl", "gear"], target=target, prob=1.1)
+
+        with pytest.raises(
+            ValueError,
+            match="'prob' values must be between 0 and 1 \\(exclusive\\). Got 1.1.",
+        ):
+            plot_slopes(model, idata, "hp", "am", prob=1.1)
+
+        with pytest.raises(
+            ValueError,
+            match="'prob' values must be between 0 and 1 \\(exclusive\\). Got -0.1.",
+        ):
+            plot_comparisons(model, idata, "am", "hp", prob=-0.1)
+
+        with pytest.raises(
+            ValueError,
+            match="'prob' values must be between 0 and 1 \\(exclusive\\). Got -0.1.",
+        ):
+            plot_predictions(model, idata, ["hp", "cyl", "gear"], target=target, prob=-0.1)
+
+        with pytest.raises(
+            ValueError,
+            match="'prob' values must be between 0 and 1 \\(exclusive\\). Got -0.1.",
+        ):
+            plot_slopes(model, idata, "hp", "am", prob=-0.1)
+
+    def test_multiple_prob(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+        # Numeric main (uses Band) and categorical main (uses Range)
+        result = plot_predictions(model, idata, "hp", prob=[0.5, 0.94])
+        assert isinstance(result, Plot)
+        result = plot_predictions(model, idata, "gear", prob=[0.5, 0.94])
+        assert isinstance(result, Plot)
+        result = plot_comparisons(model, idata, "hp", "am", prob=[0.5, 0.94])
+        assert isinstance(result, Plot)
+        result = plot_slopes(model, idata, "hp", "am", prob=[0.5, 0.94])
+        assert isinstance(result, Plot)
+
+    def test_plot_customization(self, mtcars_fixture):
+        """Verify plots can be customized after creation without calling .show()."""
+        model, idata = mtcars_fixture
+
+        # Test plot_predictions
+        plot = plot_predictions(model, idata, "hp")
+        assert isinstance(plot, Plot)
+        # Verify customization works (method chaining)
+        customized = plot.label(title="Custom Title", x="Horsepower")
+        assert isinstance(customized, Plot)
+
+        # Test plot_comparisons
+        plot = plot_comparisons(model, idata, "hp", "am")
+        assert isinstance(plot, Plot)
+        customized = plot.label(title="Custom Comparison")
+        assert isinstance(customized, Plot)
+
+        # Test plot_slopes
+        plot = plot_slopes(model, idata, "hp", "am")
+        assert isinstance(plot, Plot)
+        customized = plot.label(title="Custom Slopes")
+        assert isinstance(customized, Plot)
+
+    def test_panel_order_follows_data_order(self):
+        pigs = [4602, 8437, 4817]
+        data = pd.DataFrame(
+            {
+                "Time": [1.0, 1.0, 1.0, 2.0, 2.0, 2.0],
+                "Pig": pigs * 2,
+                "estimate": [1.0, 2.0, 3.0, 1.5, 2.5, 3.5],
+                "lower_94%": [0.9, 1.9, 2.9, 1.4, 2.4, 3.4],
+                "upper_94%": [1.1, 2.1, 3.1, 1.6, 2.6, 3.6],
+            }
+        )
+        config = PlottingConfig.from_params(
+            ["Time", "Pig"], subplot_kwargs={"main": "Time", "panel": "Pig"}
+        )
+
+        result = plot(data, config).plot()
+
+        assert [ax.get_title() for ax in result._figure.axes] == [str(pig) for pig in pigs]
+
+
+class TestPredictions:
+    """
+    Tests the 'plot_predictions' function for different combinations of main, group,
+    and panel variables.
+    """
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    @pytest.mark.parametrize(
+        "covariates",
+        (
+            "hp",  # Main variable is numeric
+            "gear",  # Main variable is categorical
+            ["hp"],  # Using list
+            ["gear"],  # Using list
+        ),
+    )
+    def test_basic(self, mtcars_fixture, covariates, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(model, idata, covariates, target=target)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    @pytest.mark.parametrize(
+        "covariates",
+        (
+            ["hp", "wt"],  # Main: numeric. Group: numeric
+            ["hp", "cyl"],  # Main: numeric. Group: categorical
+            ["gear", "wt"],  # Main: categorical. Group: numeric
+            ["gear", "cyl"],  # Main: categorical. Group: categorical
+        ),
+    )
+    def test_with_groups(self, mtcars_fixture, covariates, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(model, idata, covariates, target=target)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    @pytest.mark.parametrize(
+        "covariates",
+        (["hp", "cyl", "gear"], ["cyl", "hp", "gear"], ["cyl", "gear", "hp"]),
+    )
+    def test_with_group_and_panel(self, mtcars_fixture, covariates, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(model, idata, covariates, target=target)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    @pytest.mark.parametrize(
+        "conditional",
+        [
+            ({"hp": [110, 175], "am": [0, 1], "drat": [3, 4, 5]}),
+            ({"hp": [150], "am": [1], "drat": [3, 4, 5]}),
+        ],
+    )
+    def test_with_user_values(self, mtcars_fixture, conditional, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(model, idata, conditional=conditional, target=target)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("average_by", ["am", "drat", ["am", "drat"]])
+    def test_average_by(self, mtcars_fixture, average_by):
+        model, idata = mtcars_fixture
+
+        # grid of values with average_by
+        result = plot_predictions(model, idata, ["hp", "am", "drat"], average_by)
+        assert isinstance(result, Plot)
+
+        # unit level with average by covariates
+        result = plot_predictions(model, idata, None, average_by)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("average_by", ["am", ["am", "drat"], "all"])
+    def test_average_by_summarizes_averaged_draws(self, mtcars_fixture, average_by):
+        # The bounds must be computed from the draws averaged within each group,
+        # not by averaging the bounds of each row
+        # See https://github.com/bambinos/bambi/issues/1004
+        model, idata = mtcars_fixture
+        conditional = {"hp": [100, 150, 200], "am": [0, 1], "drat": [3, 4]}
+        unit = predictions(model, idata, conditional, prob=0.9)
+        result = predictions(model, idata, conditional, average_by=average_by, prob=0.9)
+
+        mu = unit.draws.posterior["mu"]
+        by = [] if average_by == "all" else np.atleast_1d(average_by).tolist()
+        for _, row in result.summary.iterrows():
+            mask = (unit.summary[by] == row[by]).all(axis=1)
+            expected = summarize_draws(mu.isel(__obs__=np.flatnonzero(mask)).mean("__obs__"), 0.9)
+            observed = row[["estimate", "lower_5.0%", "upper_95.0%"]].astype(float)
+            np.testing.assert_allclose(observed, expected)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    def test_fig_kwargs(self, mtcars_fixture, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(
+            model,
+            idata,
+            ["hp", "cyl", "gear"],
+            target=target,
+            fig_kwargs={"sharey": True, "theme": {"font.size": 12}},
+        )
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    def test_subplot_kwargs(self, mtcars_fixture, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(
+            model,
+            idata,
+            ["hp", "drat"],
+            target=target,
+            subplot_kwargs={"main": "hp", "group": "drat", "panel": "drat"},
+        )
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "mpg"])
+    @pytest.mark.parametrize(
+        "transforms",
+        (
+            {"mpg": np.log},
+            {"hp": np.log},
+            {"mpg": np.log, "hp": np.log},
+        ),
+    )
+    def test_transforms(self, mtcars_fixture, transforms, target):
+        model, idata = mtcars_fixture
+        result = plot_predictions(model, idata, ["hp"], target=target, transforms=transforms)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("target", ["mean", "y"])
+    def test_multiple_outputs_with_alias(self, target):
+        """Test plot cap default and specified values for target argument"""
+        rng = np.random.default_rng(121195)
+        N = 200
+        a, b = 0.5, 1.1
+        x = rng.uniform(-1.5, 1.5, N)
+        shape = np.exp(0.3 + x * 0.5 + rng.normal(scale=0.1, size=N))
+        y = rng.gamma(shape, np.exp(a + b * x) / shape, N)
+        data_gamma = pd.DataFrame({"x": x, "y": y})
+
+        formula = bmb.Formula("y ~ x", "alpha ~ x")
+        model = bmb.Model(formula, data_gamma, family="gamma")
+
+        # Without alias
+        idata = model.fit(tune=100, draws=100, random_seed=1234)
+        # Test default target
+        result = plot_predictions(model, idata, "x", target=target)
+        assert isinstance(result, Plot)
+        # Test user supplied target argument
+        result = plot_predictions(model, idata, "x", target="alpha")
+        assert isinstance(result, Plot)
+
+        # With alias
+        alias = {"alpha": {"Intercept": "sd_intercept", "x": "sd_x", "alpha": "sd_alpha"}}
+        model.set_alias(alias)
+        idata = model.fit(tune=100, draws=100, random_seed=1234)
+
+        # Test user supplied target argument
+        result = plot_predictions(model, idata, "x", target="alpha")
+        assert isinstance(result, Plot)
+
+    def test_group_effects(self, sleep_study):
+        model, idata = sleep_study
+
+        # contains new unseen data
+        result = plot_predictions(model, idata, ["Days", "Subject"], sample_new_groups=True)
+        assert isinstance(result, Plot)
+
+        with pytest.raises(
+            ValueError,
+            match="There are new groups for the factors \('Subject',\) and 'sample_new_groups' is False.",
+        ):
+            # default: sample_new_groups=None, normalized to False
+            plot_predictions(model, idata, ["Days", "Subject"])
+
+    @pytest.mark.parametrize(
+        "covariates",
+        (
+            "length",  # Main variable is numeric
+            "sex",  # Main variable is categorical
+            ["length", "sex"],  # Using both covariates
+        ),
+    )
+    def test_categorical_response(self, food_choice, covariates):
+        model, idata = food_choice
+        result = plot_predictions(model, idata, covariates)
+        assert isinstance(result, Plot)
+
+    def test_categorical_response_summary_keeps_all_categories(self, food_choice):
+        model, idata = food_choice
+
+        result = predictions(model, idata, conditional={"length": [30.0, 50.0, 70.0]})
+        summary = result.summary
+
+        assert len(summary) == 9
+        assert (summary.groupby("length")["choice_dim"].nunique() == 3).all()
+        np.testing.assert_allclose(summary.groupby("length")["estimate"].sum(), 1)
+
+    def test_term_transformations(self, formulae_transform, nonformulae_transform):
+        model, idata = formulae_transform
+
+        # Test that the plot works with a formulae transformation
+        result = plot_predictions(model, idata, ["x2", "x1"])
+        assert isinstance(result, Plot)
+
+        model, idata = nonformulae_transform
+
+        # Test that the plot works with a non-formulae transformation
+        result = plot_predictions(model, idata, "x1")
+        assert isinstance(result, Plot)
+
+    def test_same_variable_conditional_and_group(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+
+        # Plot predictions where a categorical variable is passed to both
+        # `conditional` and as the `group` variable
+        result = plot_predictions(
+            model=model,
+            idata=idata,
+            conditional="am",
+            subplot_kwargs={"main": "am", "group": "am"},
+        )
+        assert isinstance(result, Plot)
+
+    def test_distributional_target(self, distributional_fixture):
+        model, idata = distributional_fixture
+        result = plot_predictions(model, idata, "x", target="alpha")
+        assert isinstance(result, Plot)
+
+    def test_integer_predictor(self, integer_data_fixture):
+        model, idata = integer_data_fixture
+        result = plot_predictions(model, idata, "x_int")
+        assert isinstance(result, Plot)
+
+
+class TestComparisons:
+    """
+    Tests the plot_comparisons function for different combinations of
+    contrast and conditional variables, and user inputs.
+    """
+
+    @pytest.mark.parametrize(
+        "contrast, conditional",
+        [("hp", "am"), ("am", "hp")],  # numeric & categorical  # categorical & numeric
+    )
+    def test_basic(self, mtcars_fixture, contrast, conditional):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, contrast, conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "contrast, conditional",
+        [
+            ("hp", ["am", "drat"]),  # numeric & [categorical, numeric]
+            ("hp", ["drat", "am"]),  # numeric & [numeric, categorical]
+        ],
+    )
+    def test_with_groups(self, mtcars_fixture, contrast, conditional):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, contrast, conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "conditional",
+        [["am", "drat", "gear"], ["drat", "am", "gear"], ["drat", "gear", "am"]],
+    )
+    def test_with_group_and_panel(self, mtcars_fixture, conditional):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, "hp", conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "contrast, conditional",
+        [
+            ({"hp": [110, 175]}, ["am", "drat"]),  # user provided values
+            (
+                {"hp": [110, 175]},
+                {"am": [0, 1], "drat": [3, 4, 5]},
+            ),  # user provided values
+        ],
+    )
+    def test_with_user_values(self, mtcars_fixture, contrast, conditional):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, contrast, conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "contrast, conditional, subplot_kwargs",
+        [("drat", ["hp", "am"], {"main": "hp", "group": "am", "panel": "am"})],
+    )
+    def test_subplot_kwargs(self, mtcars_fixture, contrast, conditional, subplot_kwargs):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(
+            model, idata, contrast, conditional, subplot_kwargs=subplot_kwargs
+        )
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "contrast, conditional, transforms",
+        [
+            ("drat", ["hp", "am"], {"hp": np.log}),  # transform main numeric
+            ("drat", ["hp", "am"], {"mpg": np.log}),  # transform response
+        ],
+    )
+    def test_transforms(self, mtcars_fixture, contrast, conditional, transforms):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, contrast, conditional, transforms=transforms)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("average_by", ["am", "drat", ["am", "drat"]])
+    def test_average_by(self, mtcars_fixture, average_by):
+        model, idata = mtcars_fixture
+
+        # grid of values with average_by
+        result = plot_comparisons(model, idata, "hp", ["am", "drat"], average_by)
+        assert isinstance(result, Plot)
+
+        # unit level with average by
+        result = plot_comparisons(model, idata, "hp", None, average_by)
+        assert isinstance(result, Plot)
+
+    def test_group_effects(self, sleep_study):
+        model, idata = sleep_study
+
+        # contains new unseen data
+        result = plot_comparisons(model, idata, "Days", "Subject", sample_new_groups=True)
+        assert isinstance(result, Plot)
+        # user passed values seen in observed data
+        result = plot_comparisons(
+            model,
+            idata,
+            contrast={"Days": [2, 4]},
+            conditional={"Subject": [308, 335, 352, 372]},
+        )
+        assert isinstance(result, Plot)
+
+        with pytest.raises(
+            ValueError,
+            match="There are new groups for the factors \('Subject',\) and 'sample_new_groups' is False.",
+        ):
+            # default: sample_new_groups=None, normalized to False
+            plot_comparisons(model, idata, "Days", "Subject")
+
+    @pytest.mark.parametrize(
+        "contrast, conditional",
+        [
+            ("sex", "length"),
+            ("length", "sex"),
+        ],  # Categorical & numeric  # Numeric & categorical
+    )
+    def test_categorical_response(self, food_choice, contrast, conditional):
+        model, idata = food_choice
+        result = plot_comparisons(model, idata, contrast, conditional)
+        assert isinstance(result, Plot)
+
+    def test_categorical_response_multiple_comparison_summary(self, food_choice):
+        model, idata = food_choice
+
+        result = comparisons(
+            model,
+            idata,
+            contrast={"length": [30.0, 50.0, 70.0]},
+            conditional={"sex": ["male", "female"]},
+        )
+        summary = result.summary
+
+        assert len(summary) == 18
+        assert (summary.groupby(["sex", "value"])["choice_dim"].size() == 3).all()
+        assert (summary.groupby(["sex", "value"])["choice_dim"].nunique() == 3).all()
+
+    def test_average_by_summarizes_averaged_draws(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+        conditional = {"am": [0, 1], "drat": [3, 4]}
+        low = predictions(model, idata, {"hp": [100], **conditional})
+        high = predictions(model, idata, {"hp": [150], **conditional})
+        diff = high.draws.posterior["mu"] - low.draws.posterior["mu"]
+
+        result = comparisons(
+            model, idata, {"hp": [100, 150]}, conditional, average_by="am", prob=0.9
+        )
+        assert len(result.summary) == 2
+        for _, row in result.summary.iterrows():
+            mask = low.summary["am"] == row["am"]
+            expected = summarize_draws(diff.isel(__obs__=np.flatnonzero(mask)).mean("__obs__"), 0.9)
+            observed = row[["estimate", "lower_5.0%", "upper_95.0%"]].astype(float)
+            np.testing.assert_allclose(observed, expected)
+
+    @pytest.mark.parametrize("comparison", ["ratio", "lift"])
+    def test_comparison_types(self, mtcars_fixture, comparison):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, "hp", "am", comparison=comparison)
+        assert isinstance(result, Plot)
+
+    def test_target_response(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+        result = plot_comparisons(model, idata, "hp", "am", target="mpg")
+        assert isinstance(result, Plot)
+
+    def test_custom_callable(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+
+        def my_comparison(reference, contrast):
+            return contrast - 2 * reference
+
+        result = plot_comparisons(model, idata, "hp", "am", comparison=my_comparison)
+        assert isinstance(result, Plot)
+
+    def test_integer_contrast(self, integer_data_fixture):
+        model, idata = integer_data_fixture
+        result = plot_comparisons(model, idata, "x_int", "x_float")
+        assert isinstance(result, Plot)
+
+
+class TestSlopes:
+    """
+    Tests the 'plot_slopes' function for different combinations, elasticity,
+    and effect types (unit and average slopes) of 'wrt' and 'conditional'
+    variables.
+    """
+
+    def test_basic(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+        # numeric wrt & categorical conditional
+        result = plot_slopes(model, idata, "hp", "am")
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "wrt, conditional",
+        [
+            ("hp", ["am", "drat"]),  # numeric & [categorical, numeric]
+            ("hp", ["drat", "am"]),  # numeric & [numeric, categorical]
+        ],
+    )
+    def test_with_groups(self, mtcars_fixture, wrt, conditional):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, wrt, conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "conditional",
+        [["am", "drat", "gear"], ["drat", "am", "gear"], ["drat", "gear", "am"]],
+    )
+    def test_with_group_and_panel(self, mtcars_fixture, conditional):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, "hp", conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "wrt, conditional",
+        [
+            ({"hp": 150}, ["am", "drat"]),  # single 'wrt' value
+            ({"hp": 150}, {"am": [0, 1], "drat": [3, 4, 5]}),  # single 'wrt' value
+        ],
+    )
+    def test_with_user_values(self, mtcars_fixture, wrt, conditional):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, wrt, conditional)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("slope", ["dydx", "dyex", "eyex", "eydx"])
+    def test_elasticity(self, mtcars_fixture, slope):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, "hp", "drat", slope=slope)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "wrt, conditional, subplot_kwargs",
+        [("drat", ["hp", "am"], {"main": "hp", "group": "am", "panel": "am"})],
+    )
+    def test_subplot_kwargs(self, mtcars_fixture, wrt, conditional, subplot_kwargs):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, wrt, conditional, subplot_kwargs=subplot_kwargs)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize(
+        "wrt, conditional, transforms",
+        [
+            ("drat", ["hp", "am"], {"hp": np.log}),  # transform main numeric
+            ("drat", ["hp", "am"], {"mpg": np.log}),  # transform response
+        ],
+    )
+    def test_transforms(self, mtcars_fixture, wrt, conditional, transforms):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, wrt, conditional, transforms=transforms)
+        assert isinstance(result, Plot)
+
+    @pytest.mark.parametrize("average_by", ["am", "drat", ["am", "drat"]])
+    def test_average_by(self, mtcars_fixture, average_by):
+        model, idata = mtcars_fixture
+
+        # grid of values with average_by
+        result = plot_slopes(model, idata, "hp", ["am", "drat"], average_by)
+        assert isinstance(result, Plot)
+
+        # unit level with average by
+        result = plot_slopes(model, idata, "hp", None, average_by)
+        assert isinstance(result, Plot)
+
+    def test_average_by_summarizes_averaged_draws(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+        eps = 1e-4
+        conditional = {"am": [0, 1], "drat": [3, 4]}
+        result = slopes(model, idata, {"hp": 150}, conditional, average_by="am", eps=eps, prob=0.9)
+
+        # Rebuild the slope draws of each grid row from the predictions on the grid
+        grid = result.draws["data"].to_dataset().to_dataframe()
+        mu = result.draws.posterior["mu"]
+        at_x = np.flatnonzero(grid["hp"] == 150)
+        at_x_eps = np.flatnonzero(grid["hp"] != 150)
+        dydx = (mu.isel(__obs__=at_x_eps).values - mu.isel(__obs__=at_x).values) / eps
+        dydx = mu.isel(__obs__=at_x).copy(data=dydx)
+
+        assert len(result.summary) == 2
+        for _, row in result.summary.iterrows():
+            mask = grid["am"].iloc[at_x] == row["am"]
+            expected = summarize_draws(dydx.isel(__obs__=np.flatnonzero(mask)).mean("__obs__"), 0.9)
+            observed = row[["estimate", "lower_5.0%", "upper_95.0%"]].astype(float)
+            np.testing.assert_allclose(observed, expected)
+
+    def test_group_effects(self, sleep_study):
+        model, idata = sleep_study
+
+        # contains new unseen data
+        result = plot_slopes(model, idata, "Days", "Subject", sample_new_groups=True)
+        assert isinstance(result, Plot)
+        # user passed values seen in observed data
+        result = plot_slopes(model, idata, wrt={"Days": 2}, conditional={"Subject": [308]})
+        assert isinstance(result, Plot)
+
+        with pytest.raises(
+            ValueError,
+            match="There are new groups for the factors \('Subject',\) and 'sample_new_groups' is False.",
+        ):
+            # default: sample_new_groups=None, normalized to False
+            plot_slopes(model, idata, "Days", "Subject")
+
+    def test_categorical_response(self, food_choice):
+        model, idata = food_choice
+        # Only numeric wrt is supported
+        result = plot_slopes(model, idata, "length", "sex")
+        assert isinstance(result, Plot)
+
+    def test_target_response(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+        result = plot_slopes(model, idata, "hp", "am", target="mpg")
+        assert isinstance(result, Plot)
+
+    def test_custom_callable(self, mtcars_fixture):
+        model, idata = mtcars_fixture
+
+        def my_slope(derivative, x, y):
+            return derivative * 2
+
+        result = plot_slopes(model, idata, "hp", "drat", slope=my_slope)
+        assert isinstance(result, Plot)
+
+    def test_integer_wrt(self, integer_data_fixture):
+        model, idata = integer_data_fixture
+        result = plot_slopes(model, idata, "x_int", "x_float")
+        assert isinstance(result, Plot)
