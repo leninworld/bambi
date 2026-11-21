@@ -1,0 +1,114 @@
+{
+ "absolute_seconds": 3600,
+ "approved_patch_sha256": "69abdeb1115eca3519c40c29e2e4512890294ab592c4054b67623634223adaf7",
+ "artifact_cap": 67108864,
+ "base_image": "python@sha256:dddbf9c143d4d3dff1c68e104645bac612823d33ef09571c71eff41faf07c194",
+ "branch": "validate-bambi558-main-93bc3ad-a4",
+ "candidate_attempt": 4,
+ "candidate_commit": "d15822f4f28a9d8f3cfcd70cd2da06fd7251fd76",
+ "candidate_expected_collected_count": 406,
+ "candidate_expected_collected_count_status": "EXPECTATION_ONLY; gate is observed baseline - old skip + 11 observed fallback ids",
+ "candidate_expected_fallback_cases": 11,
+ "candidate_patch_sha256": "835bc40a73c94b379700f78bfa23c0fd0366945aacd6395a1c0a1f39f44c00c1",
+ "canonical_lock": {
+  "bytes": 627098,
+  "git_blob": "b22fe1ecad07f2c73330fa7371e8ddc538963fd5",
+  "mode": "100644",
+  "path": "pixi.lock",
+  "sha256": "fca13390dcc1013e93032efe7e056c6fa721492486fe36caf20076eb97523a95"
+ },
+ "cleanup_end_seconds": 3300,
+ "execution_enabled": true,
+ "expected_hashseed_cases": 2,
+ "host_disk_admission": 25769803776,
+ "host_memory_admission": 13958643712,
+ "host_total_memory_admission": 15032385536,
+ "lanes": {
+  "docs": {
+   "env": "dev",
+   "linker": "cvm",
+   "prepare_seconds": 900,
+   "role": "docs"
+  },
+  "py312-cvm": {
+   "env": "py312",
+   "linker": "cvm",
+   "prepare_seconds": 1620,
+   "pytest_basis": "1.5x complete upstream main job 558s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing.",
+   "pytest_entry_floor_seconds": 1020,
+   "pytest_seconds": 840,
+   "role": "test"
+  },
+  "py312-numba": {
+   "env": "py312",
+   "linker": "numba",
+   "prepare_seconds": 720,
+   "pytest_basis": "1.5x complete upstream main job 889s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing.",
+   "pytest_entry_floor_seconds": 1520,
+   "pytest_seconds": 1340,
+   "role": "test"
+  },
+  "py313-cvm": {
+   "env": "py313",
+   "linker": "cvm",
+   "prepare_seconds": 720,
+   "pytest_basis": "1.5x complete upstream main job 898s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing.",
+   "pytest_entry_floor_seconds": 1530,
+   "pytest_seconds": 1350,
+   "role": "test"
+  },
+  "py313-numba": {
+   "env": "py313",
+   "linker": "numba",
+   "prepare_seconds": 720,
+   "pytest_basis": "1.5x complete upstream main job 1208s, rounded up10s. Entire job is conservative upper bound for pytest portion; no invented per-step timing.",
+   "pytest_entry_floor_seconds": 2000,
+   "pytest_seconds": 1820,
+   "role": "test"
+  }
+ },
+ "mutation_lane": "py312-cvm",
+ "native_container_memory": "12g",
+ "native_container_pids": 4096,
+ "network_bytes_cap": 8589934592,
+ "no_retry": true,
+ "bytecode_writes_forbidden": true,
+ "optimize_forbidden": true,
+ "overlay": [
+  {
+   "candidate": {
+    "bytes": 28291,
+    "git_blob": "e5c20579ded419cd03d3b552a3128b0f4d157664",
+    "mode": "100644",
+    "path": "tests/test_model_construction.py",
+    "sha256": "201d7c3f55bbb97994b7821eb2270e3c04487c01f6294b1c1d1747a7a8363974"
+   },
+   "original": {
+    "bytes": 22058,
+    "git_blob": "fc05e397f8122e16b122d7bc23ff44a695229179",
+    "mode": "100644",
+    "path": "tests/test_model_construction.py",
+    "sha256": "19b40496256b07d27418761c1c5f4c5dd1111993b6205d1394c98249f5f291ef"
+   },
+   "packet_file": "candidate-test_model_construction.py",
+   "path": "tests/test_model_construction.py"
+  }
+ ],
+ "pixi_version": "0.62.2",
+ "purpose": "Bambi #558 candidate attempt 4 (attempt 3 lost to a harness bytecode write in the sealed packet; no project code ran): approved tests-only patch 69abdeb1 rebased onto main 93bc3ad4 with the single import-block union",
+ "quarto_version": "1.8.26",
+ "source": "93bc3ad44d2072c282f6d2a79dd64dd0f5da3bb1",
+ "source_file_count": 239,
+ "source_tree": "5b041a816426b97d432d234e5f19119356514fca",
+ "target_seconds": 3000,
+ "unchanged_inputs": {
+  ".pre-commit-config.yaml": "94d86a064598573700bc955f18ae57aa48c5137f",
+  "bambi/backend/pymc.py": "a382031ad0aff90253d2bf7c0f62919243edb29a",
+  "docs/_quarto.yml": "ceb7e262d9e5d878ba60f5c4001eb0448948140a",
+  "pyproject.toml": "86e40f6903e458d6aa66e7e08643b42b9df00e8e",
+  "tests/conftest.py": "7fd5de8e9bd2ce15c8b1d10d2ab8a2657eb3c7a4"
+ },
+ "upload_step_seconds": 180,
+ "venue": "GitHub-hosted ubuntu-24.04 native AMD64 Docker on leninworld/bambi; no Mac Docker, no external disk",
+ "workflow_file": "validate-bambi558-a4.yml"
+}
