@@ -1,0 +1,47 @@
+name: Docs preview (render only, no publish)
+
+on:
+  push:
+    branches:
+      - docs-preview-1095
+      - docs-preview-1097
+
+permissions:
+  contents: read
+
+jobs:
+  render-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.8.26
+
+      - uses: prefix-dev/setup-pixi@v0.9.2
+        with:
+          pixi-version: v0.62.2
+          environments: "dev"
+
+      - name: Build documentation (same commands as upstream publish-docs.yml)
+        shell: bash
+        run: |
+          cd docs
+          pixi run -e dev python -m quartodoc build --verbose
+          pixi run -e dev python -m quartodoc interlinks
+          quarto render
+          touch _site/.nojekyll
+          ls _site
+
+      - name: Upload rendered site
+        uses: actions/upload-artifact@v4
+        with:
+          name: bambi-docs-${{ github.ref_name }}
+          path: docs/_site
+          retention-days: 3
