@@ -1,0 +1,37 @@
+{
+  "attempt": 12,
+  "branch": "validate-bambi1097-6fb8d132-h5",
+  "source_commit": "6fb8d132d711b030109f0d452ba42c739d655647",
+  "source_tree": "fe6848d9100cb8ce639bf731e3377fdb991277e9",
+  "source_files": 246,
+  "contribution_commit": "97704be6a0ab1cbc09518e05b3f2b4a072181682",
+  "notebook": {
+    "cell_timeout_seconds": 900,
+    "cells": 27,
+    "fit_cells": ["e51b2c4f", "d9e0c765"],
+    "max_bytes": 10485760,
+    "path": "docs/notebooks/causal_effects.ipynb",
+    "plot_cells": ["879daa1e", "ee47199e", "d16da0e8", "dbd7f5e2"],
+    "png_min_bytes": 5000,
+    "reviewed_file": "candidate-causal_effects.ipynb",
+    "reviewed_sha256": "dc4557ddc506df5d063d6f8bd4427d7016d42848bb7548f0b74d7de6229f1ea4",
+    "stderr_allowed": [
+      "Initializing NUTS using jitter\\+adapt_diag\\.\\.\\.",
+      "Multiprocess sampling \\(4 chains in (2|4) jobs\\)",
+      "NUTS: \\[[A-Za-z0-9_|:, ]+\\]",
+      "Sampling 4 chains for 1_000 tune and 1_000 draw iterations \\(4_000 \\+ 4_000 draws total\\) took \\d+ seconds?\\.",
+      "Modeling the probability that converted==converted"
+    ],
+    "stdout_cells": ["7dcb2c80"],
+    "table_cells": {
+      "19e3f5be": ["dose:z", "sigma"],
+      "5ecad129": ["dose", "site"],
+      "962166ed": ["difference", "risk_ratio", "odds_ratio"],
+      "9b7fbd33": ["atu"],
+      "ae20c8fe": ["ate"],
+      "b066b82e": ["att"],
+      "b8faea13": ["standardized_mean"]
+    },
+    "warning_word_ok_cells": []
+  }
+}

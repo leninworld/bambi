@@ -1,0 +1,202 @@
+name: Validate Bambi 1097 merge 6fb8d132 attempt 12
+
+on:
+  push:
+    branches: [validate-bambi1097-6fb8d132-h5]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bambi1097-attempt12-6fb8d132
+  cancel-in-progress: false
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  PIXI_VERSION: v0.62.2
+
+jobs:
+  test:
+    name: test-${{ matrix.python }}-${{ matrix.linker }}
+    if: github.repository == 'leninworld/bambi' && github.ref == 'refs/heads/validate-bambi1097-6fb8d132-h5' && github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        python: [py312, py313]
+        linker: [cvm, numba]
+    steps:
+      - name: Checkout parentless payload
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        timeout-minutes: 3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify run and reconstructed source identities
+        timeout-minutes: 2
+        run: python3 -I -B validation/bambi1097/verify_identity.py
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.9.2
+        timeout-minutes: 10
+        with:
+          pixi-version: ${{ env.PIXI_VERSION }}
+          environments: ${{ matrix.python }}
+      - name: Full tests once
+        timeout-minutes: 55
+        env:
+          PYTENSOR_FLAGS: linker=${{ matrix.linker }}
+        run: >-
+          python3 -I -B validation/bambi1097/run_checked.py
+          "${RUNNER_TEMP}/test-${{ matrix.python }}-${{ matrix.linker }}.json" --
+          pixi run -e "${{ matrix.python }}" pytest -vv --cov=bambi --cov-report=term
+          --cov-report=xml tests
+      - name: Coverage report once
+        timeout-minutes: 3
+        run: >-
+          python3 -I -B validation/bambi1097/run_checked.py
+          "${RUNNER_TEMP}/coverage-${{ matrix.python }}-${{ matrix.linker }}.json" --
+          pixi run -e "${{ matrix.python }}" coverage report -m
+      - name: Stage bounded test evidence
+        if: always()
+        timeout-minutes: 2
+        run: |
+          args=("${RUNNER_TEMP}/bambi1097-${GITHUB_RUN_ID}-test-${{ matrix.python }}-${{ matrix.linker }}" test)
+          for p in "${RUNNER_TEMP}/bambi1097-identity.json" "${RUNNER_TEMP}/test-${{ matrix.python }}-${{ matrix.linker }}.json" "${RUNNER_TEMP}/test-${{ matrix.python }}-${{ matrix.linker }}.log" "${RUNNER_TEMP}/coverage-${{ matrix.python }}-${{ matrix.linker }}.json" "${RUNNER_TEMP}/coverage-${{ matrix.python }}-${{ matrix.linker }}.log" coverage.xml; do
+            test ! -f "$p" || args+=("$p")
+          done
+          python3 -I -B validation/bambi1097/stage_evidence.py "${args[@]}"
+      - name: Upload bounded test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        timeout-minutes: 3
+        with:
+          name: bambi1097-${{ github.run_id }}-test-${{ matrix.python }}-${{ matrix.linker }}
+          path: ${{ runner.temp }}/bambi1097-${{ github.run_id }}-test-${{ matrix.python }}-${{ matrix.linker }}
+          if-no-files-found: error
+          retention-days: 7
+
+  quality:
+    name: quality-${{ matrix.python }}
+    if: github.repository == 'leninworld/bambi' && github.ref == 'refs/heads/validate-bambi1097-6fb8d132-h5' && github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        python: [py312, py313]
+    steps:
+      - name: Checkout parentless payload
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        timeout-minutes: 3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify run and reconstructed source identities
+        timeout-minutes: 2
+        run: python3 -I -B validation/bambi1097/verify_identity.py
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.9.2
+        timeout-minutes: 10
+        with:
+          pixi-version: ${{ env.PIXI_VERSION }}
+          environments: ${{ matrix.python }}
+      - name: Hooks once
+        timeout-minutes: 25
+        run: >-
+          python3 -I -B validation/bambi1097/run_checked.py
+          "${RUNNER_TEMP}/hooks-${{ matrix.python }}.json" --
+          python3 -I -B validation/bambi1097/run_upstream_hooks.py "${{ matrix.python }}"
+      - name: Pylint once
+        timeout-minutes: 25
+        run: >-
+          python3 -I -B validation/bambi1097/run_checked.py
+          "${RUNNER_TEMP}/pylint-${{ matrix.python }}.json" --
+          pixi run -e "${{ matrix.python }}" pylint bambi
+      - name: Stage bounded quality evidence
+        if: always()
+        timeout-minutes: 2
+        run: |
+          args=("${RUNNER_TEMP}/bambi1097-${GITHUB_RUN_ID}-quality-${{ matrix.python }}" quality)
+          for p in "${RUNNER_TEMP}/bambi1097-identity.json" "${RUNNER_TEMP}/hooks-${{ matrix.python }}.json" "${RUNNER_TEMP}/hooks-${{ matrix.python }}.log" "${RUNNER_TEMP}/pylint-${{ matrix.python }}.json" "${RUNNER_TEMP}/pylint-${{ matrix.python }}.log"; do
+            test ! -f "$p" || args+=("$p")
+          done
+          python3 -I -B validation/bambi1097/stage_evidence.py "${args[@]}"
+      - name: Upload bounded quality evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        timeout-minutes: 3
+        with:
+          name: bambi1097-${{ github.run_id }}-quality-${{ matrix.python }}
+          path: ${{ runner.temp }}/bambi1097-${{ github.run_id }}-quality-${{ matrix.python }}
+          if-no-files-found: error
+          retention-days: 7
+
+  docs:
+    name: docs-science
+    if: github.repository == 'leninworld/bambi' && github.ref == 'refs/heads/validate-bambi1097-6fb8d132-h5' && github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout parentless payload
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        timeout-minutes: 3
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify run and reconstructed source identities
+        timeout-minutes: 2
+        run: python3 -I -B validation/bambi1097/verify_identity.py
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        timeout-minutes: 5
+        with:
+          version: 1.8.26
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.9.2
+        timeout-minutes: 10
+        with:
+          pixi-version: ${{ env.PIXI_VERSION }}
+          environments: dev
+      - name: Execute reviewed notebook and private scientific probe once
+        timeout-minutes: 35
+        env:
+          A12_PACKET: ${{ github.workspace }}/validation/bambi1097
+          A12_SOURCE: ${{ github.workspace }}
+          A12_WORK: ${{ runner.temp }}/bambi1097-docs-work
+        run: |
+          mkdir -p "${A12_WORK}/evidence"
+          python3 -I -B validation/bambi1097/run_checked.py "${RUNNER_TEMP}/notebook.json" -- pixi run -e dev python -I -B validation/bambi1097/notebook_exec.py
+      - name: Full documentation build once
+        timeout-minutes: 20
+        run: |
+          python3 -I -B validation/bambi1097/run_checked.py "${RUNNER_TEMP}/docs-build.json" -- bash -euo pipefail -c '
+            cd docs
+            pixi run -e dev python -m quartodoc build --verbose
+            pixi run -e dev python -m quartodoc interlinks
+            quarto render
+            touch _site/.nojekyll
+            pixi run -e dev python -m sphobjinv convert -o zlib objects.txt objects.inv
+            mv objects.inv _site/objects.inv
+            test -s _site/notebooks/causal_effects.html
+          '
+      - name: Stage bounded notebook and rendered evidence
+        if: always()
+        timeout-minutes: 2
+        run: |
+          args=("${RUNNER_TEMP}/bambi1097-${GITHUB_RUN_ID}-docs-science" docs)
+          for p in "${RUNNER_TEMP}/bambi1097-identity.json" "${RUNNER_TEMP}/notebook.json" "${RUNNER_TEMP}/notebook.log" "${RUNNER_TEMP}/docs-build.json" "${RUNNER_TEMP}/docs-build.log" "${RUNNER_TEMP}/bambi1097-docs-work/evidence/executed-causal_effects.ipynb" "${RUNNER_TEMP}/bambi1097-docs-work/evidence/notebook-execution-retained.ipynb" "${RUNNER_TEMP}/bambi1097-docs-work/evidence/notebook-receipt.json" "${RUNNER_TEMP}/bambi1097-docs-work/evidence/science-probe.json" docs/_site/notebooks/causal_effects.html; do
+            test ! -f "$p" || args+=("$p")
+          done
+          python3 -I -B validation/bambi1097/stage_evidence.py "${args[@]}"
+      - name: Upload bounded docs evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        timeout-minutes: 3
+        with:
+          name: bambi1097-${{ github.run_id }}-docs-science
+          path: ${{ runner.temp }}/bambi1097-${{ github.run_id }}-docs-science
+          if-no-files-found: error
+          retention-days: 7
