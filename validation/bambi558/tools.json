@@ -1,0 +1,20 @@
+[
+  {
+    "name": "pixi-x86_64-unknown-linux-musl.tar.gz",
+    "size": 27933565,
+    "browser_download_url": "https://github.com/prefix-dev/pixi/releases/download/v0.62.2/pixi-x86_64-unknown-linux-musl.tar.gz",
+    "digest": "sha256:9333a89567e8235881b9357b35585f4b4da6255e100235559dbb4702f3c6d97c",
+    "tag": "v0.62.2",
+    "binary_acquired": false
+  },
+  {
+    "id": 315517550,
+    "name": "quarto-1.8.26-linux-amd64.tar.gz",
+    "size": 125045395,
+    "browser_download_url": "https://github.com/quarto-dev/quarto-cli/releases/download/v1.8.26/quarto-1.8.26-linux-amd64.tar.gz",
+    "digest": "sha256:ad8caa6d3aecc3f2b6a4a8fb8296677ef2ef9410a48a3eeba7b1f9a1c91000f0",
+    "tag": "v1.8.26",
+    "release_id": 261735092,
+    "binary_acquired": false
+  }
+]
